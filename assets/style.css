@@ -1,0 +1,12 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+header{
+    background-color: rgb(43, 43, 77);
+    color: white;
+    padding: 1%;
+}
+.navside{
+    padding: 1%;
+}
