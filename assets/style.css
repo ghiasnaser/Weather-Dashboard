@@ -1,6 +1,15 @@
-*{
+* ::after ::before{
     margin: 0;
     padding: 0;
+    box-sizing: 0;
+}
+.row{
+    margin-right: 0;
+    margin-left: 0;
+}
+.srch{
+    background-color: lightgreen;
+    color: black;
 }
 header{
     background-color: rgb(43, 43, 77);
@@ -8,5 +17,30 @@ header{
     padding: 1%;
 }
 .navside{
-    padding: 1%;
+   padding-left: 0;
+   margin-left: 0;
+}   
+nav{
+    padding-left: 0;
+    margin-left: 0;
 }
+.list-group-item{
+    background-color: rgba(128, 128, 128, 0.333);
+    text-align: center;
+}
+.nav_bar{
+   
+}
+.weather_container{
+
+}
+.today_weather{
+    border-bottom: outset;
+    border-color: gray;
+}
+.five_days{
+    
+}
+.card{
+    background-color: rgb(43, 43, 77);
+    color: white;

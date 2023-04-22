@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="./assets/style.css">
     <title>Document</title>
 </head>
@@ -12,22 +13,92 @@
 <header class="text-center">
     <h1>Weather Dashboard</h1>
 </header>
-<div class="row mb-3 navside">
-    <nav class="col-md-3">
-        <h2>Search for city:</h2>
-        <form class="form-horizontal">
-            <input class="form-control mr-sm-2 col-12 " type="search" placeholder="Enter the city name" aria-label="Search">
-            <br>
-            <button class="btn btn-outline-success col-12 my-2 my-sm-0" type="submit">Search</button>
-        </form>
-        <hr>
-        <ul class="list-group">
-            <a href="#" class="list-group-item list-group-item-action">A second link item</a>
-            <a href="#" class="list-group-item list-group-item-action">A third link item</a>
-            <a href="#" class="list-group-item list-group-item-action">A fourth link item</a>
-        </ul>
-    </nav>
-</div>
+<div class="container row col-12 no-gutters">
+    <div class="nav_bar col-12 col-md-6 col-lg-3">
+        <nav class="search_area pr-2">
+            <h2>Search for city:</h2>
+                <form class="form-horizontal">
+                    <input class="form-control mr-sm-2" type="search" placeholder="Enter the city name" aria-label="Search" id="city-search">
+                    <br>
+                    <div class="dropdown" id="drop" style="display: none;">
+                      <button class="btn btn-secondary dropdown-toggle col my-2 my-sm-0" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Please select a state
+                      </button>
+                      <div class="dropdown-menu col my-2 my-sm-0" id="state_list" aria-labelledby="dropdownMenuButton">
+                      </div>
+                    </div>
+                    <br id="drpo_bar" style="display: none;">
+                    <button class="btn btn-outline-success col my-2 my-sm-0 srch" id="search" type="submit">Search</button>
+                </form>
+                <hr class="pt-1">
+                <ul class="list-group">
+                    <a href="#" class="list-group-item list-group-item-action">A second link item</a>
+                    <br>
+                    <a href="#" class="list-group-item list-group-item-action">A third link item</a>
+                    <br>
+                    <a href="#" class="list-group-item list-group-item-action">A fourth link item</a>
+                    <br>
+                </ul>
+        </nav>
+    </div>
+    <div class="weather_container col-12 col-md-6 col-lg-9 ">
+        <div class="today_weather pl-4 col- h-50" id="today">
+            
+        </div>
+        <div class="row five_days row pl-4 col- h-50" id="five_days_weather">
+
+
+
+        </div>
+    </div>
+
+  </div>
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--<div class="container">
+    <div class="row">
+        <div class="mb-3 navside col">
+            <nav class="col-4 ">
+                <h2>Search for city:</h2>
+                <form class="form-horizontal">
+                    <input class="form-control mr-sm-2" type="search" placeholder="Enter the city name" aria-label="Search">
+                    <br>
+                    <button class="btn btn-outline-success col my-2 my-sm-0" type="submit">Search</button>
+                </form>
+                <hr>
+                <ul class="list-group">
+                    <a href="#" class="list-group-item list-group-item-action">A second link item</a>
+                    <br>
+                    <a href="#" class="list-group-item list-group-item-action">A third link item</a>
+                    <br>
+                    <a href="#" class="list-group-item list-group-item-action">A fourth link item</a>
+                    <br>
+                </ul>
+            </nav>
+        </div>
+        <div class="weather_container col-6">
+            <p>kkkkkkkkkkkkkkkkkkkkkk</p>
+        </div>
+    </div>
+</div> -->
     <!-- Sidenav
 <div
   id="sidenav-3"
@@ -101,5 +172,11 @@
 </div>
 
 Sidenav-->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+<script src="./assets/script.js"></script>
 </body>
 </html>
