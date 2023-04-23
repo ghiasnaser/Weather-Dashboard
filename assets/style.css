@@ -44,3 +44,8 @@ nav{
 .card{
     background-color: rgb(43, 43, 77);
     color: white;
+}
+select{
+    background-color: yellow;
+    height: 40px;
+}
