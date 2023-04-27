@@ -8,42 +8,23 @@ const cityEl=document.getElementById("city-search");
 const menuEl=document.getElementById("dropdownMenuButton");
 const todayEl=document.getElementById("today");
 const five_daysEl=document.getElementById("five_days_weather");
-const visitedCitiesListEL=document.getElementById("visited");
 //const weather_symbols=[{name:"sunny",class:"fas fa-sun",style:style="color:rgb(255,200,26)"}];
 //var latitude;
 //var longitude;
-var cities=[];
+var visited_cities=[];//localStorage.getItem("visited_cities");
 var set=false;
-var cityObj={};
+var city_obj={};
 //var city;
 //var obj;
-//localStorage.removeItem("cities");
 
-if(localStorage.getItem("cities")!=null){
-  cities=JSON.parse(localStorage.getItem("cities"));
-  console.log(cities);
-}
-//localStorage.removeItem("cities");
 /*cityEl.addEventListener("change",function(){
   stat_listEl.innerHTML="";
   dropdownEl.style.display="none";
   barEl.style.display="none";
 });*/
 
-
-function displayVisitedCities(list){
-  $(visitedCitiesListEL).value="";
-  /*for (var i=0;i<list.length;i++){
-    $(visitedCitiesListEL).append(`
-    <a href="#" class="list-group-item list-group-item-action" Index="${i}">${list[i].city} / ${list[i].state}</a>
-    <br>
-    `);
-  }*/
-
-}
-
 function reset() {
-  ////console.log("ffffffrest");
+  //console.log("ffffffrest");
   //stats=[];
   //stat_listEl.innerHTML="";
   dropdownEl.innerHTML="";
@@ -51,11 +32,11 @@ function reset() {
   five_daysEl.innerHTML="";
   dropdownEl.style.display="none";
   barEl.style.display="none";
-  cityObj={};
-  set=true;
+  city_obj={};
+ // set=true;
 }
 
-////console.log("befor"+cityObj);
+//console.log("befor"+city_obj);
 
 
 
@@ -64,13 +45,13 @@ async function getGeocoding(name){
   var Geocoding_URL=`http://api.openweathermap.org/geo/1.0/direct?q=${name}&limit=5&appid=537f8a6f1c2847e5c474a3c3f52efc17`;
   var state_name;
   var city_name;
-  var exist=false;
+  var done=false;
    await fetch(Geocoding_URL)
         .then(function (response) {        
             return response.json();
             })
             .then(function(data){
-              ////console.log(data);
+              console.log(data);
               city_name=data[0].name;
               if(data.length>1){
                 dropdownEl.style.display="block";
@@ -88,105 +69,54 @@ async function getGeocoding(name){
                 }
                 dropdownEl.addEventListener("change",function(event) {
                   event.preventDefault;
-                 // //console.log("p");
-                   // //console.log("1");
+                  console.log("p");
+                    console.log("1");
                     state_name=this.value;
                     dropdownEl.style.display="none";
                     barEl.style.display="none";
                     done=true;
-                   // //console.log(state_name);
+                    console.log(state_name);
                     var index
                     for (var j=0;j<data.length;j++){
                       if(data[j].state==state_name){
                         index=j;
                       }
                     }
-                    /*cityObj.lat=data[index].lat;
-                    cityObj.long =data[index].lon;
-                    cityObj.state=state_name;
-                    cityObj.city=city_name;*/
-                    cityObj={
-                      lat:data[index].lat,
-                      long: data[index].lon,
-                      city: city_name,
-                      state:state_name
-                    }
-                    //console.log(cityObj);
-                   // //console.log("lat ="+cityObj.lat);
-                    ////console.log("lat ="+cityObj.long);
-                    //if (!(cities.includes(cityObj))){
-                      //cities.push(cityObj);
-                    if(cities.length==0){
-                      cities.push(cityObj);
-                      localStorage.setItem("cities",JSON.stringify(cities));
-                      displayVisitedCities(cities);
-                      console.log("add in the empty situation");
-                    }
-                    else{
-                      for (var i=0;i<cities.length;i++){
-                        console.log("again");
-                        if (JSON.stringify(cities[i])==JSON.stringify(cityObj)){
-                          exist=true;
-                          
-
-                        }
-                        
-                      }
-                      if(!exist){
-                        cities.push(cityObj);
-                          //console.log(cities.length);
-                          //console.log(cities);
-                          localStorage.setItem("cities",JSON.stringify(cities));
-                          displayVisitedCities(cities);
-                          console.log("add with non empty array");
-                      }
-                    }
-                   // }
-                    //console.log("city object");
-                    //console.log(cityObj);
+                    city_obj.lat=data[index].lat;
+                    city_obj.long =data[index].lon;
+                    city_obj.state=state_name;
+                    city_obj.city=city_name;
+                    console.log("lat ="+city_obj.lat);
+                    console.log("lat ="+city_obj.long);
+                  /*  if (!(visited_cities.includes(city_obj))){
+                      visited_cities.push(city_obj);
+                      localStorage.setItem("visited_cities",visited_cities);
+                    }*/
+                    console.log(city_obj);
                     display_weather();
-                   // return(cityObj);
+                  //  return(city_obj);
                 })
               }
               else{
-                
                 state_name=data[0].state;
-                cityObj={
-                  lat:data[0].lat,
-                  long: data[0].lon,
-                  city: city_name,
-                  state:state_name
-                }
-                /*cityObj.lat=data[0].lat;
-                cityObj.long =data[0].lon;
-                cityObj.state=state_name;
-                cityObj.city=city_name;*/
-               // if (!cities.includes(cityObj)){
-                for (var i=0;i<cities.length;i++){
-                  if (JSON.stringify(cities[i])===JSON.stringify(cityObj)){
-                    exist=true;
-                    
-                  }
-                }
-                if (!exist){
-                  cities.push(cityObj);
-                    //console.log(cities.length);
-                    //console.log(cities);
-                    localStorage.setItem("cities",JSON.stringify(cities));
-                    displayVisitedCities(cities);
-
-                }
-                //}
+                city_obj.lat=data[0].lat;
+                city_obj.long =data[0].lon;
+                city_obj.state=state_name;
+                city_obj.city=city_name;
+               /* if (!visited_cities.includes(city_obj)){
+                  visited_cities.push(city_obj);
+                  localStorage.setItem("visited_cities",visited_cities);
+                }*/
                 display_weather();
-                //return(cityObj);
+                //return(city_obj);
               }
-              ////console.log("ggggggg"+cityObj);
+              //console.log("ggggggg"+city_obj);
              
-                return(cityObj)
+                return(city_obj)
               
               });
             
-            //return(cityObj);         
+            //return(city_obj);         
 }
 
 async function get_weather(obj){
@@ -200,7 +130,7 @@ async function get_weather(obj){
       return response.json();
     })
     .then(function(data){
-     // //console.log(data);
+      console.log(data);
       var Today_date=dayjs.unix(data.daily[0].dt).format('MM/DD/YYYY');
       var max_temp=data.daily[0].temp.max;
       var min_temp=data.daily[0].temp.min;
@@ -242,40 +172,34 @@ async function get_weather(obj){
     //reset();
 }
 function display_weather(){
- // //console.log("diplayed");
- //console.log("city object befor calling the weather")
-  //console.log(cityObj);
-  get_weather(cityObj);
+  console.log("diplayed");
+  console.log(city_obj);
+  get_weather(city_obj);
 }
 function setname(event){
   event.preventDefault();
- if(set){
-    reset();
-    set=false;
-  }
-  
-  for (var i=0;i<cities.length;i++){
-    //console.log("saved cities are here")
-    //console.log(cities[i]);
-  }
+ /// if(set){
+    //reset();
+    //set=false;
+  //}
   var city_name=cityEl.value;
-  ////console.log("llll"+cityObj);
+  //console.log("llll"+city_obj);
   getGeocoding(city_name);
-  set=true;
-  ////console.log("mmmmmmm"+cityObj);
+  //set=true;
+  //console.log("mmmmmmm"+city_obj);
   /*a.then(function(result){
-    //console.log("klklkl");
-    //console.log(result);
+    console.log("klklkl");
+    console.log(result);
   });*/  
   
-  ////console.log("after"+cityObj);
+  //console.log("after"+city_obj);
   
- /* if(cityObj){
-    //console.log("inside");
-    get_weather(cityObj);
+ /* if(city_obj){
+    console.log("inside");
+    get_weather(city_obj);
   }*/
-  ////console.log("kkkkkkkkkkklllllllllllll  ="+cityObj);
-  //get_weather(cityObj);
+  //console.log("kkkkkkkkkkklllllllllllll  ="+city_obj);
+  //get_weather(city_obj);
 }
 searchEl.addEventListener("click",setname);
 
@@ -295,9 +219,9 @@ function fetch_function(event){
             })
             .then(function(data){
               //obj = data ;
-              //console.log(data);
+              console.log(data);
               city=data[0].name;
-              ////console.log("lat : "+latitude);
+              //console.log("lat : "+latitude);
               
               
               if(data.length>1){
@@ -317,19 +241,19 @@ function fetch_function(event){
                 dropdownEl.addEventListener("change",function(event) {
                   //event.preventDefault;
                   //event.target;
-                  //console.log("p");
+                  console.log("p");
                 // document.getElementById("item").addEventListener("click",function() {
-                    //console.log("1");
+                    console.log("1");
                     state_name=this.value;
                     dropdownEl.style.display="none";
                     barEl.style.display="none";
-                    //console.log(state_name);
+                    console.log(state_name);
                     var index
                     for (var j=0;j<data.length;j++){
                       if(data[j].state==state_name){
                         index=j;
-                        ////console.log(index);
-                        ////console.log(index);
+                        //console.log(index);
+                        //console.log(index);
                         latitude=data[index].lat;
                         longitude =data[index].lon;
                       }
@@ -342,7 +266,7 @@ function fetch_function(event){
                         return response.json();
                       })
                       .then(function(data){
-                          //console.log(data);
+                          console.log(data);
                           var Today_date=dayjs.unix(data.daily[0].dt).format('MM/DD/YYYY');
                           var max_temp=data.daily[0].temp.max;
                           var min_temp=data.daily[0].temp.min;
@@ -398,8 +322,8 @@ function fetch_function(event){
                     for (var j=0;j<data.length;j++){
                       if(data[j].state==state_name){
                         index=j;
-                        ////console.log(index);
-                        ////console.log(index);
+                        //console.log(index);
+                        //console.log(index);
                         latitude=data[index].lat;
                         longitude =data[index].lon;
                       }
@@ -414,7 +338,7 @@ function fetch_function(event){
                         return response.json();
                       })
                       .then(function(data){
-                          //console.log(data);
+                          console.log(data);
                           var Today_date=dayjs.unix(data.daily[0].dt).format('MM/DD/YYYY');
                           var max_temp=data.daily[0].temp.max;
                           var min_temp=data.daily[0].temp.min;
@@ -470,9 +394,9 @@ function fetch_function(event){
     <p>Wind: 100 MPH</p>
     <p>Humidty: 100 %</p>`
     );*/
-////console.log(obj[0].name); */
+//console.log(obj[0].name); */
 //var weather_URL=`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${APIKey}`;        
-////console.log("data are"+data);
+//console.log("data are"+data);
 
 
 
