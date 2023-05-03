@@ -15,7 +15,7 @@ var cityObj={};
 //localStorage.removeItem("cities");
 if(localStorage.getItem("cities")!=null){
   cities=JSON.parse(localStorage.getItem("cities"));
-  console.log(cities);
+  //console.log(cities);
 }
 
 displaySavedCities();
@@ -31,7 +31,7 @@ function displaySavedCities(){
           event.preventDefault ();
           event.currentTarget;
           var index=El.getAttribute("index");
-          console.log("index = "+ El.getAttribute("index"));
+          //console.log("index = "+ El.getAttribute("index"));
           getCityWeather(index);
         });
     }      
@@ -108,25 +108,29 @@ async function getGeocoding(name){
                       city: city_name,
                       state:state_name
                     }
-                    if(cities.length==0){
-                      cities.push(cityObj);
-                      localStorage.setItem("cities",JSON.stringify(cities));
-                      displayVisitedCities(cityObj);
-                      console.log("add in the empty situation");
-                    }
-                    else{
+                   
+                    if(cities.length>0){
                       for (var i=0;i<cities.length;i++){
-                        console.log("again");
-                        if (JSON.stringify(cities[i])==JSON.stringify(cityObj)){
+                        //console.log("again");
+                        if (JSON.stringify(cities[i])===JSON.stringify(cityObj)){
                           exist=true;
                         }
                       }
                       if(!exist){
-                        cities.push(cityObj);
+                          cities.push(cityObj);
+                          localStorage.setItem("cities",JSON.stringify(cities));
                           localStorage.setItem("cities",JSON.stringify(cities));
                           displayVisitedCities(cityObj);
-                          console.log("add with non empty array");
+                          
+                          //console.log("add with non empty array");
                       }
+                    }
+                    else if(cities.length==0){
+                      cities.push(cityObj);
+                      localStorage.setItem("cities",JSON.stringify(cities));
+                      displayVisitedCities(cityObj);
+                      
+                      ////console.log("add in the empty situation");
                     }
                     display_weather();
                 })
@@ -204,6 +208,7 @@ async function get_weather(obj){
         );
       }
     });
+    cityObj={};
 }
 function display_weather(){
   get_weather(cityObj);
