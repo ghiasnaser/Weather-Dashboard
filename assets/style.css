@@ -49,3 +49,16 @@ select{
     background-color: yellow;
     height: 40px;
 }
+.nextPrev{
+    background-color: rgb(196, 196, 196);
+    
+}
+#previous,#next{
+    color: black;
+    border-color: black ;
+}
+
+#delete{
+    background-color: red;
+    color: black;
+}

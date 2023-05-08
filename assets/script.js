@@ -1,176 +1,208 @@
 const APIKey="537f8a6f1c2847e5c474a3c3f52efc17";
-const APIKey_daily="c49a6cb97c14282afdca683da085b1f5";
 const dropdownEl=document.getElementById("drop");
 const barEl=document.getElementById("drpo_bar");
-const searchEl=document.getElementById("search");
-const cityEl=document.getElementById("city-search");
-const menuEl=document.getElementById("dropdownMenuButton");
+const searchBtnEl=document.getElementById("search");
+const cityNameEl=document.getElementById("city-search");
 const todayEl=document.getElementById("today");
 const five_daysEl=document.getElementById("five_days_weather");
 const visitedCitiesListEL=document.getElementById("visited");
 const btnEL=document.querySelectorAll("button");
-var cities=[];
-var set=false;
+const nextBtnEl=document.getElementById("next");
+const prevBtnEl=document.getElementById("previous");
+var cities=JSON.parse(localStorage.getItem("visitedCities")) || [];
 var cityObj={};
-//localStorage.removeItem("cities");
-if(localStorage.getItem("cities")!=null){
-  cities=JSON.parse(localStorage.getItem("cities"));
-  //console.log(cities);
-}
+var index=0;
+var diff=0;
 
-displaySavedCities();
+
+//----- This function will display all the searched history once we open the application
 function displaySavedCities(){
-  $(visitedCitiesListEL).value="";
+  $(visitedCitiesListEL).html(""); // empty the list of the search history
+    // this for loop will add button for each city in the cities array from the local storage
     for (var i=0;i<cities.length;i++){
       $(visitedCitiesListEL).append(`
-        <button type="button" class="btn btn-success" id="history${i}" index="${i}">${cities[i].city} / ${cities[i].state}</button>
+        <button type="button" class="btn btn-success" id="history${i}" index="${i}" style="display: none;">${cities[i].name} / ${cities[i].state}</button>
         <br>
-        `);
-        var El=document.getElementById("history"+i);
-        El.addEventListener("click",function(event){
-          event.preventDefault ();
-          event.currentTarget;
-          var index=El.getAttribute("index");
-          //console.log("index = "+ El.getAttribute("index"));
-          getCityWeather(index);
-        });
-    }      
- 
-}
-function displayVisitedCities(CityVisited){
-  var index;
-  for (var i=0;i<cities.length;i++){
-    if(JSON.stringify(cities[i])===JSON.stringify(CityVisited)){
-      index=i;
+      `);
+      addBtnListener(i); // for each button we will add a listener so we can click on the button to see the weather for that city
+    }
+  // then we will display the first 4 cities in the array  
+  if(cities.length>4){
+    for (var j=index; j<(index+4); j++){
+      document.getElementById(`history${j}`).style.display="block";
+    }
+    nextBtnEl.style.display="block"
+    index+=4;
+  }
+  else{
+    for(var j=0; j<cities.length; j++){
+      document.getElementById(`history${j}`).style.display="block";
     }
   }
-    $(visitedCitiesListEL).append(`
-    <button type="button" class="btn btn-success" index=${index}">${CityVisited.city} / ${CityVisited.state}</button>
-    <br>
-    `);
+}
+// ----- this function will dispalay the next 4 cities in the search history
+function displayNext(event){
+  event.preventDefault();
+  if(cities.length>(index+4)){
+    for (var i=0; i<cities.length; i++){
+      document.getElementById(`history${i}`).style.display="none";
+    }
+    for (var j=index; j<(index+4); j++){
+      document.getElementById(`history${j}`).style.display="block";
+    }
+    index+=4;
+    console.log("index" + index);
+    prevBtnEl.style.display="block";
+  }
+  else{
+    for (var i=0; i<cities.length; i++){
+      document.getElementById(`history${i}`).style.display="none";
+    }
+    for (var j=index; j<cities.length; j++){
+      document.getElementById(`history${j}`).style.display="block";
+    }
+    diff=cities.length-index;
+    index=cities.length;
+    prevBtnEl.style.display="block";
+    nextBtnEl.style.display="none"
+  }
 }
 
-function getCityWeather(index) {
+// ----- this function will dispalay the Previous 4 cities in the search history (the newer cities in the search)
+function displayPrev(event){
+  event.preventDefault();
+  if(index>4){
+    for (var i=0; i<cities.length; i++){
+      document.getElementById(`history${i}`).style.display="none";
+    }
+    if(diff!=0){
+      index-=diff;
+    }
+    for (var j=index; j>(index-4); j--){
+      document.getElementById(`history${j-1}`).style.display="block";
+    }
+    index-=4;
+    nextBtnEl.style.display="block";
+  }
+  else{
+    for (var i=0; i<cities.length; i++){
+      document.getElementById(`history${i}`).style.display="none";
+    }
+    for (var j=index; j>0; j--){
+      document.getElementById(`history${j-1}`).style.display="block";
+    }
+    index=0;
+    prevBtnEl.style.display="none";
+  }
+}
+prevBtnEl.addEventListener("click",displayPrev);
+nextBtnEl.addEventListener("click",displayNext);
 
-  get_weather(cities[index]);
+//-------- this function display the city wither once we click on that button with city name
+function addBtnListener(id){
+    document.getElementById(`history${id}`).addEventListener("click", function(event){
+      event.preventDefault();
+      getWeather(cities[id]);
+    });
 }
 
-function reset() {
-  dropdownEl.innerHTML="";
-  todayEl.innerHTML="";
-  five_daysEl.innerHTML="";
-  dropdownEl.style.display="none";
-  barEl.style.display="none";
-  cityObj={};
-  set=true;
+// ---------- this function will get the latitude and longitude for a city using the city name
+function getGeocodingInfo(cityName){
+  var url=`http://api.openweathermap.org/geo/1.0/direct?q=${cityName}&limit=5&appid=${APIKey}`;
+  fetch(url)
+  .then (function (Response){
+    return Response.json();
+  })
+  .then(function(data){
+    console.log(data);
+    if(data.lenght==1){
+      cityObj.name=data[0].name;
+      cityObj.state=data[0].state;
+      cityObj.latitude=data[0].lat;
+      cityObj.longitud=data[0].lon;
+      addToCities(cityObj);
+      getWeather(cityObj);
+      cityObj={};
+      cityNameEl.value="";
+      console.log("Add becuse there is one city");
+      console.log(cities);
+      console.log(cityObj);
+    }
+    else if(data.length>1){
+      creatStatsList(data);
+      dropdownEl.addEventListener("change",function(event){
+        event.preventDefault();
+        var stateName=dropdownEl.value;
+        dropdownEl.style.display="none";
+        barEl.style.display="none";
+        cityObj={};
+        for(var i=0; i<data.length; i++){
+          if(data[i].state==stateName){
+            console.log("the city I will add is");
+            console.log(data[i]);
+            cityObj.name=data[i].name;
+            cityObj.state=data[i].state;
+            cityObj.latitude=data[i].lat;
+            cityObj.longitud=data[i].lon;
+            addToCities(cityObj);
+            getWeather(cityObj);
+            cityNameEl.value="";
+          }
+        }
+        data="";
+      });
+    }
+  });
 }
 
-async function getGeocoding(name){
-  
-  var Geocoding_URL=`http://api.openweathermap.org/geo/1.0/direct?q=${name}&limit=5&appid=537f8a6f1c2847e5c474a3c3f52efc17`;
-  var state_name;
-  var city_name;
+// ---- in case the city is exist in mutibel stats this we call this function to make a list of the states so we can choose the right one
+function creatStatsList(arr){
+  dropdownEl.style.display="block";
+  barEl.style.display="block";
+  $(dropdownEl).append(`
+    <option selected>Please select the state</option>
+  `);
+  for (var i=0; i<arr.length; i++){
+    if(arr[i].country=="US"){
+      $(dropdownEl).append(`
+        <option value="${arr[i].state}">${arr[i].state}</option>
+      `);
+    }
+  }
+}
+
+//---- this function will add a city object to a cities array if that object is not already exist in the array
+function addToCities(obj){
   var exist=false;
-   await fetch(Geocoding_URL)
-        .then(function (response) {        
-            return response.json();
-            })
-            .then(function(data){
-              city_name=data[0].name;
-              if(data.length>1){
-                dropdownEl.style.display="block";
-                barEl.style.display="block";
-                $(dropdownEl).append(`
-                  <option selected>Please select the state</option>
-                    `);
-                for (var i=0; i<data.length;i++){
-                  if(data[i].country=="US"){
-                    $(dropdownEl).append(`
-                    <option value="${data[i].state}">${data[i].state}</option>
-                    `);
-                  }
-                }
-                dropdownEl.addEventListener("change",function(event) {
-                  event.preventDefault;
-                    state_name=this.value;
-                    dropdownEl.style.display="none";
-                    barEl.style.display="none";
-                    done=true;
-                    var index
-                    for (var j=0;j<data.length;j++){
-                      if(data[j].state==state_name){
-                        index=j;
-                      }
-                    }
-                    cityObj={
-                      lat:data[index].lat,
-                      long: data[index].lon,
-                      city: city_name,
-                      state:state_name
-                    }
-                   
-                    if(cities.length>0){
-                      for (var i=0;i<cities.length;i++){
-                        //console.log("again");
-                        if (JSON.stringify(cities[i])===JSON.stringify(cityObj)){
-                          exist=true;
-                        }
-                      }
-                      if(!exist){
-                          cities.push(cityObj);
-                          localStorage.setItem("cities",JSON.stringify(cities));
-                          localStorage.setItem("cities",JSON.stringify(cities));
-                          displayVisitedCities(cityObj);
-                          
-                          //console.log("add with non empty array");
-                      }
-                    }
-                    else if(cities.length==0){
-                      cities.push(cityObj);
-                      localStorage.setItem("cities",JSON.stringify(cities));
-                      displayVisitedCities(cityObj);
-                      
-                      ////console.log("add in the empty situation");
-                    }
-                    display_weather();
-                })
-              }
-              else{
-                state_name=data[0].state;
-                cityObj={
-                  lat:data[0].lat,
-                  long: data[0].lon,
-                  city: city_name,
-                  state:state_name
-                }
-                for (var i=0;i<cities.length;i++){
-                  if (JSON.stringify(cities[i])===JSON.stringify(cityObj)){
-                    exist=true;   
-                  }
-                }
-                if (!exist){
-                  cities.push(cityObj);
-                    localStorage.setItem("cities",JSON.stringify(cities));
-                    displayVisitedCities(cityObj);
-                }
-                display_weather();
-              }
-                return(cityObj)
-              });        
+  for (var i=0; i<cities.length; i++){
+    if(JSON.stringify(obj)==JSON.stringify(cities[i])){
+      exist=true;
+      console.log(exist);
+    }
+  }
+  if(!exist){
+    cities.push(obj);
+    localStorage.setItem("visitedCities",JSON.stringify(cities));
+  }
+  if(cities.length==1){
+   document.getElementById("delete").style.display="block";
+  }
+  displaySavedCities();
 }
 
-async function get_weather(obj){
-  var city = obj.city;
-  var state_name = obj.state;
-  var latitude = obj.lat;
-  var longitude = obj.long;
+// -------- this function will get the weather of a city using a city object that cintain(name,latitude,longitude) of that city
+function getWeather(cityObject){
+  var city = cityObject.name;
+  var state_name = cityObject.state;
+  var latitude = cityObject.latitude;
+  var longitude = cityObject.longitud;
   var weatherURL=`https://api.openweathermap.org/data/3.0/onecall?lat=${latitude}&lon=${longitude}&exclude=hourly,current,minutely,alerts&appid=${APIKey}&units=imperial`;
   fetch(weatherURL)
-    .then(function(response){
-      return response.json();
-    })
-    .then(function(data){
-      var Today_date=dayjs.unix(data.daily[0].dt).format('MM/DD/YYYY');
+  .then(function(response){
+    return response.json();
+  })
+  .then(function(data){
+    var Today_date=dayjs.unix(data.daily[0].dt).format('MM/DD/YYYY');
       var max_temp=data.daily[0].temp.max;
       var min_temp=data.daily[0].temp.min;
       var humidity=data.daily[0].humidity;
@@ -207,21 +239,36 @@ async function get_weather(obj){
         </div>`
         );
       }
-    });
-    cityObj={};
-}
-function display_weather(){
-  get_weather(cityObj);
-}
-function setname(event){
-  event.preventDefault();
- if(set){
-    reset();
-    set=false;
-  }
+  });
   
-  var city_name=cityEl.value;
-  getGeocoding(city_name);
-  set=true;
 }
-searchEl.addEventListener("click",setname);
+
+// ---- this is the function that will start the code when we click on the search button
+function search(event){
+  event.preventDefault();
+  dropdownEl.innerHTML="";
+  cityObj={};
+  var cityName=cityNameEl.value;
+  getGeocodingInfo(cityName);
+}
+
+if(cities.length>0){
+  displaySavedCities();
+  document.getElementById("delete").style.display="block";
+}
+else{
+  document.getElementById("delete").style.display="none";
+}
+
+// ---- this is a listener on the (clear history button) which will clear the history search anf refresh the page
+document.getElementById("delete").addEventListener("click",function(event){
+  event.preventDefault();
+  localStorage.removeItem("visitedCities");
+  $(visitedCitiesListEL).html("");
+  prevBtnEl.style.display="none";
+  nextBtnEl.style.display="none";
+  document.getElementById("delete").style.display="none";
+  window.location.reload();
+});
+// listener on the search button
+searchBtnEl.addEventListener("click",search);
