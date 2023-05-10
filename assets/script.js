@@ -108,7 +108,7 @@ function addBtnListener(id){
 
 // ---------- this function will get the latitude and longitude for a city using the city name
 function getGeocodingInfo(cityName){
-  var url=`http://api.openweathermap.org/geo/1.0/direct?q=${cityName}&limit=5&appid=${APIKey}`;
+  var url=`https://api.openweathermap.org/geo/1.0/direct?q=${cityName}&limit=5&appid=${APIKey}`;
   fetch(url)
   .then (function (Response){
     return Response.json();
