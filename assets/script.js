@@ -203,7 +203,7 @@ function getWeather(cityObject){
       $(todayEl).html("");
       $(five_daysEl).html("");
       $(todayEl).append(`
-        <h2>${city} / ${state_name} (${Today_date}) <img id="wicon" src="http://openweathermap.org/img/w/${icon_picture}.png" alt="Weather icon"></h2>
+        <h2>${city} / ${state_name} (${Today_date}) <img id="wicon" src="https://openweathermap.org/img/w/${icon_picture}.png" alt="Weather icon"></h2>
         <p>Temp: High(${max_temp}&#${8457};) / Low (${min_temp}&#${8457};)</p>
         <p>Wind: ${wind} MPH</p>
         <p>Humidty: ${humidity} %</p>`
@@ -222,7 +222,7 @@ function getWeather(cityObject){
           <div class="card">
             <div class="card-body">
               <h4 class="card-title">${Today_date}</h4>
-              <img id="wicon" src="http://openweathermap.org/img/w/${icon_picture}.png" alt="Weather icon">
+              <img id="wicon" src="https://openweathermap.org/img/w/${icon_picture}.png" alt="Weather icon">
               <p class="card-text">Temp: High(${max_temp}&#${8457};) / Low(${min_temp}&#${8457};)</p>
               <p class="card-text">Wind: ${wind} MPH</p>
               <p class="card-text">Humidty: ${humidity} %</p>
