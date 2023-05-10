@@ -51,7 +51,6 @@ function displayNext(event){
       document.getElementById(`history${j}`).style.display="block";
     }
     index+=4;
-    console.log("index" + index);
     prevBtnEl.style.display="block";
   }
   else{
@@ -114,7 +113,6 @@ function getGeocodingInfo(cityName){
     return Response.json();
   })
   .then(function(data){
-    console.log(data);
     if(data.lenght==1){
       cityObj.name=data[0].name;
       cityObj.state=data[0].state;
@@ -124,9 +122,6 @@ function getGeocodingInfo(cityName){
       getWeather(cityObj);
       cityObj={};
       cityNameEl.value="";
-      console.log("Add becuse there is one city");
-      console.log(cities);
-      console.log(cityObj);
     }
     else if(data.length>1){
       creatStatsList(data);
@@ -138,8 +133,6 @@ function getGeocodingInfo(cityName){
         cityObj={};
         for(var i=0; i<data.length; i++){
           if(data[i].state==stateName){
-            console.log("the city I will add is");
-            console.log(data[i]);
             cityObj.name=data[i].name;
             cityObj.state=data[i].state;
             cityObj.latitude=data[i].lat;
@@ -177,7 +170,6 @@ function addToCities(obj){
   for (var i=0; i<cities.length; i++){
     if(JSON.stringify(obj)==JSON.stringify(cities[i])){
       exist=true;
-      console.log(exist);
     }
   }
   if(!exist){
